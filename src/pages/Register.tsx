@@ -13,7 +13,7 @@ const Register: React.FC = () => {
   const [showToast, setShowToast] = useState(false);
 
   const doRegister = async () => {
-    // Email validation
+    
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     if (!email.match(emailPattern)) {
       setErrorMessage('Please enter a valid email address.');
@@ -21,14 +21,12 @@ const Register: React.FC = () => {
       return;
     }
 
-    // Password validation
     if (!password || !confirmPassword) {
       setErrorMessage('Password and confirmation cannot be empty.');
       setShowAlert(true);
       return;
     }
 
-    // Password match validation
     if (password !== confirmPassword) {
       setErrorMessage('Passwords do not match.');
       setShowAlert(true);
@@ -39,8 +37,12 @@ const Register: React.FC = () => {
     setShowToast(true);
 
     setTimeout(() => {
-      navigation.push('/login', 'back');
+      navigation.push('/it35-lab', 'back');  
     }, 1500);
+  };
+
+  const goBackToLogin = () => {
+    navigation.push('/it35-lab', 'back'); 
   };
 
   return (
@@ -80,6 +82,10 @@ const Register: React.FC = () => {
           />
           <IonButton onClick={doRegister} expand="full" shape="round" className="register-button">
             Register
+          </IonButton>
+
+          <IonButton onClick={goBackToLogin} expand="full" shape="round" className="back-button">
+            Back to Login
           </IonButton>
         </div>
 
