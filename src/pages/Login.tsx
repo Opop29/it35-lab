@@ -3,42 +3,47 @@ import {
   IonAvatar,
   IonButton,
   IonContent, 
-  IonIcon, 
-  IonInput, 
-  IonInputPasswordToggle,  
+  IonInput,  
   IonPage,  
   IonToast,  
   useIonRouter
 } from '@ionic/react';
-import { logoIonic } from 'ionicons/icons';
 import { useState } from 'react';
 import './css/login.css'; 
 
 const Login: React.FC = () => {
   const navigation = useIonRouter();
-  const [email, setEmail] = useState('@anime.word.ph'); 
+  const [email, setEmail] = useState('');  
   const [password, setPassword] = useState('');
   const [showAlert, setShowAlert] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
 
+  const doregister = async ( )  => {}
   const doLogin = async () => {
-     
-      if (!email.includes('@anime.word.ph')) {
-          setErrorMessage('Please enter a valid email address with "@anime.word.ph" symbol.');
-          setShowAlert(true);
-          return; 
-      }
+    
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    if (!email.match(emailPattern)) {
+        setErrorMessage('Please enter a valid email address.');
+        setShowAlert(true);
+        return; 
+    }
 
-      setShowAlert(false);
-      setShowToast(true);
-      setTimeout(() => {
-          navigation.push('/it35-lab/app', 'forward', 'replace');
-      }, 1500);
+    if (!password) {
+        setErrorMessage('Password cannot be empty.');
+        setShowAlert(true);
+        return;
+    }
+
+    setShowAlert(false);
+    setShowToast(true);
+    setTimeout(() => {
+        navigation.push('/it35-lab/app', 'forward', 'replace');
+    }, 1500);
   };
 
   const goToRegister = () => {
-      navigation.push('/register', 'forward');
+    navigation.push('/it35-lab/app/Register', 'forward');
   };
 
   return (
@@ -69,9 +74,7 @@ const Login: React.FC = () => {
                       value={password}
                       onIonChange={e => setPassword(e.detail.value!)}
                       className="login-input"
-                  >
-                      <IonInputPasswordToggle slot="end"></IonInputPasswordToggle>
-                  </IonInput>
+                  />
                   <IonButton onClick={doLogin} expand="full" shape="round" className="login-button">
                       Login
                   </IonButton>

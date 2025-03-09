@@ -1,0 +1,70 @@
+/* src/pages/css/register.css */
+
+.register-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    background-color: #f4f4f9;
+  }
+  
+  .register-container {
+    max-width: 400px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .register-avatar img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+  }
+  
+  .register-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .register-input {
+    margin-bottom: 15px;
+  }
+  
+  .register-button {
+    background-color: #ff5722;
+  }
+  /* src/pages/css/register.css */
+
+.register-button {
+    background-color: #ff5722; /* Customize color */
+    color: white;
+  }
+  
+  .register-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .register-container {
+    max-width: 400px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .register-avatar img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+  }
+  
+  .register-input {
+    margin-bottom: 15px;
+  }
+  
