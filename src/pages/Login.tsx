@@ -19,16 +19,19 @@ const Login: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
 
-  const doregister = async ( )  => {}
   const doLogin = async () => {
     
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     if (!email.match(emailPattern)) {
-        setErrorMessage('Please enter a valid email address.');
+        setErrorMessage('Please enter a valid email address and password.');
         setShowAlert(true);
         return; 
     }
-
+  if (!email) {
+        setErrorMessage('Email address cannot be empty.');
+        setShowAlert(true);
+        return;
+    }
     if (!password) {
         setErrorMessage('Password cannot be empty.');
         setShowAlert(true);
