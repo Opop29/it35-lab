@@ -110,11 +110,11 @@
   /* Responsive Styles */
   
   /* For tablet or medium screens (up to 768px) */
-  @media (max-width: 768px) {
+
     .register-container {
       padding: 20px;
-      width: 90%;
-      max-width: 350px;
+    
+    
     }
   
     .register-title {
@@ -131,15 +131,8 @@
       font-size: 14px;
       padding: 12px;
     }
-  }
   
-  /* For mobile screens (up to 480px) */
-  @media (max-width: 480px) {
-    .register-container {
-      padding: 15px;
-      width: 85%;
-      max-width: 300px;
-    }
+  
   
     .register-title {
       font-size: 20px;
@@ -155,5 +148,5 @@
       font-size: 14px;
       padding: 10px;
     }
-  }
+  
   

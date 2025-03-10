@@ -143,12 +143,7 @@ padding: 40px 30px;
 
 /* Responsive Styles */
 /* For tablet or medium screens (up to 768px) */
-@media (max-width: 768px) {
-  .login-container {
-    padding: 20px;
-    width: 90%;
-    max-width: 400px;
-  }
+
 
   .login-title {
     font-size: 22px;
@@ -172,15 +167,9 @@ padding: 40px 30px;
     font-size: 14px;
     padding: 10px;
   }
-}
 
-/* For mobile screens (up to 480px) */
-@media (max-width: 480px) {
-  .login-container {
-    padding: 15px;
-    width: 85%;
-    max-width: 350px;
-  }
+
+
 
   .login-title {
     font-size: 20px;
@@ -206,4 +195,3 @@ padding: 40px 30px;
     font-size: 14px;
     padding: 8px;
   }
-}
