@@ -24,21 +24,23 @@ const Login: React.FC = () => {
     
 
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-     if (!email) {
-        setErrorMessage('Email address cannot be empty.');
+     if (!email && !password) {
+        setErrorMessage('Please enter both email and password');
+        setShowAlert(true);
+        console.log(email);
+        return;
+    }else if (!email ){
+        setErrorMessage('Email cannot be Empty.');
+        setShowAlert(true);
+        return;
+    }else if (!password ){
+        setErrorMessage('password cannot be Empty.');
         setShowAlert(true);
         return;
     }
-    
-    if (!password) {
-        setErrorMessage('Password cannot be empty.');
-        setShowAlert(true);
-        return;
-    }
-
-
+ 
     if (!email.match(emailPattern)) {
-        setErrorMessage('Please enter a valid email address and password.');
+        setErrorMessage('Please enter a valid email address.');
         setShowAlert(true);
         return; 
     }
