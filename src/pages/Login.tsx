@@ -106,7 +106,7 @@ const Login: React.FC = () => {
                   isOpen={showToast}
                   onDidDismiss={() => setShowToast(false)}
                   message="Login successful! Redirecting..."
-                  duration={1500}
+                  duration={19500}
                   position="top"
                   color="primary"
               />

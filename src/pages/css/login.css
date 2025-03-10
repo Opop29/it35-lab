@@ -52,15 +52,15 @@ padding: 40px 30px;
 
 /* Avatar */
 .login-avatar {
-  width: 80px;
-  height: 80px;
+  width: 200px;
+  height: 200px;
   margin-bottom: 20px;
   display: block;
   margin-left: auto;
   margin-right: auto;
   border-radius: 50%;
   background-color: #fff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(26, 23, 23, 0.822);
 }
 
 .login-icon {
