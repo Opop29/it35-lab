@@ -5,7 +5,7 @@ import {
     IonContent, 
     IonInput,  
     IonPage,  
-    IonToast,  
+    IonLoading,
     useIonRouter
   } from '@ionic/react';
   import { useState } from 'react';
@@ -19,7 +19,7 @@ import {
     const [password, setPassword] = useState('');
     const [showAlert, setShowAlert] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
-    const [showToast, setShowToast] = useState(false);
+    const [loading, setLoading] = useState(false);
   
     const doLogin = async () => {
       if (!email || !password) {
@@ -34,14 +34,18 @@ import {
           return;
       }
   
+      setLoading(true); 
+  
       try {
+       
           const { data: users, error } = await supabase
               .from('users')
               .select('user_id, email, password')
               .eq('email', email)
-              .single(); 
+              .single();
   
           if (error || !users) {
+              setLoading(false);
               setErrorMessage("User not found. Please register first.");
               setShowAlert(true);
               return;
@@ -49,19 +53,19 @@ import {
   
           const passwordMatch = await bcrypt.compare(password, users.password);
           if (!passwordMatch) {
+              setLoading(false);
               setErrorMessage("Incorrect password. Please try again.");
               setShowAlert(true);
               return;
           }
   
-          setShowAlert(false);
-          setShowToast(true);
-  
           setTimeout(() => {
+              setLoading(false);
               navigation.push('/it35-lab/app', 'forward', 'replace');
-          }, 1500);
-          
+          }, 2000); 
+  
       } catch (err) {
+          setLoading(false);
           setErrorMessage("An error occurred. Please try again later.");
           setShowAlert(true);
       }
@@ -117,13 +121,11 @@ import {
                     buttons={['OK']}
                 />
   
-                <IonToast
-                    isOpen={showToast}
-                    onDidDismiss={() => setShowToast(false)}
-                    message="Login successful! Redirecting..."
-                    duration={2000}
-                    position="top"
-                    color="primary"
+                {/* Loading Screen */}
+                <IonLoading
+                    isOpen={loading}
+                    message="Logging in... Please wait."
+                    spinner="circles"
                 />
             </IonContent>
         </IonPage>
