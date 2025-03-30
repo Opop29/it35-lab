@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { IonPage, IonContent, IonInput, IonButton, IonAlert, IonToast } from '@ionic/react';
+import { IonPage, IonContent, IonInput, IonButton, IonAlert, IonToast, IonLoading } from '@ionic/react';
 import { useIonRouter } from '@ionic/react';
+import { supabase } from '../utils/supabaseClient';
+import bcrypt from 'bcryptjs';
 import './css/register.css';
 
 const Register: React.FC = () => {
@@ -11,12 +13,11 @@ const Register: React.FC = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
+  const [showLoading, setShowLoading] = useState(false);
 
   const doRegister = async () => {
-    
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    if (!email.match(emailPattern)) {
-      setErrorMessage('Please enter a valid email address.');
+    if (!email.endsWith("@Anime.world.ph")) {
+      setErrorMessage("Only @Anime.world.ph emails are allowed to register.");
       setShowAlert(true);
       return;
     }
@@ -33,12 +34,31 @@ const Register: React.FC = () => {
       return;
     }
 
-    setShowAlert(false);
-    setShowToast(true);
-
-    setTimeout(() => {
-      navigation.push('/it35-lab', 'back');  
-    }, 1500);
+    try {
+      setShowLoading(true);
+      
+      const hashedPassword = await bcrypt.hash(password, 10);
+      
+      const { data, error } = await supabase
+        .from('users')
+        .insert([{ email, password: hashedPassword }])
+        .select();
+      
+      if (error) {
+        throw error;
+      }
+      
+      setShowLoading(false);
+      setShowToast(true);
+      
+      setTimeout(() => {
+        navigation.push('/it35-lab', 'back');  
+      }, 2000);
+    } catch (error) {
+      setShowLoading(false);
+      setErrorMessage(errorMessage);
+      setShowAlert(true);
+    }
   };
 
   const goBackToLogin = () => {
@@ -101,9 +121,14 @@ const Register: React.FC = () => {
           isOpen={showToast}
           onDidDismiss={() => setShowToast(false)}
           message="Registration successful! Redirecting..."
-          duration={19500}
+          duration={2000}
           position="top"
           color="success"
+        />
+        
+        <IonLoading
+          isOpen={showLoading}
+          message={'Processing registration...'}
         />
       </IonContent>
     </IonPage>

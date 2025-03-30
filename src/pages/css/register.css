@@ -1,6 +1,4 @@
-/* register.css */
 
-/* Background */
 .register-page {
     background: linear-gradient(135deg, #ff7e5f, #feb47b);
     height: 100vh;
@@ -17,13 +15,10 @@
     padding: 30px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     width: 100%;
-   
-    text-align: center;
     box-sizing: border-box;
     animation: slideUp 1s ease-out;
   }
   
-  /* Animation for slide-up effect */
   @keyframes slideUp {
     0% {
       transform: translateY(50px);
@@ -40,7 +35,7 @@
     font-family: 'Roboto', sans-serif;
     font-size: 24px;
     font-weight: bold;
-    color: #333;
+    color: #007bff;
     margin-bottom: 20px;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
   }
@@ -107,10 +102,6 @@
     border-radius: 12px;
   }
   
-  /* Responsive Styles */
-  
-  /* For tablet or medium screens (up to 768px) */
-
     .register-container {
       padding: 20px;
     
@@ -135,7 +126,9 @@
   
   
     .register-title {
-      font-size: 20px;
+      font-size: 50px;
+      display: flex;
+      justify-content: center;
     }
   
     .register-input {
