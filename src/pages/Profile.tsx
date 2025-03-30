@@ -8,7 +8,7 @@ import {
       IonToolbar 
   } from '@ionic/react';
   
-  const Account: React.FC = () => {
+  const Profile: React.FC = () => {
     return (
       <IonPage>
         <IonHeader>
@@ -16,7 +16,7 @@ import {
             <IonButtons slot='start'>
               <IonMenuButton></IonMenuButton>
             </IonButtons>
-            <IonTitle>Template</IonTitle>
+            <IonTitle>Profile</IonTitle>
           </IonToolbar>
         </IonHeader>
         <IonContent fullscreen>
@@ -24,5 +24,5 @@ import {
       </IonPage>
     );
   };
-  
-  export default Account;
+
+  export default Profile;
