@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { 
   IonAlert,
   IonAvatar,
@@ -8,8 +9,9 @@ import {
   IonToast,  
   useIonRouter
 } from '@ionic/react';
-import { useState } from 'react';
 import './css/login.css'; 
+import { supabase } from '../utils/supabaseClient';
+import bcrypt from 'bcryptjs';
 
 const Login: React.FC = () => {
   const navigation = useIonRouter();
@@ -19,37 +21,50 @@ const Login: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
 
-  
   const doLogin = async () => {
-    
-
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-     if (!email && !password) {
+    if (!email && !password) {
         setErrorMessage('Please enter both email and password');
         setShowAlert(true);
-        console.log(email);
         return;
-    }else if (!email ){
-        setErrorMessage('Email cannot be Empty.');
+    } else if (!email) {
+        setErrorMessage('Email cannot be empty.');
         setShowAlert(true);
         return;
-    }else if (!password ){
-        setErrorMessage('password cannot be Empty.');
+    } else if (!password) {
+        setErrorMessage('Password cannot be empty.');
         setShowAlert(true);
         return;
     }
- 
-    if (!email.match(emailPattern)) {
-        setErrorMessage('Please enter a valid email address.');
+
+    if (!email.endsWith("@Anime.world.ph")) {
+        setErrorMessage("Only @Anime.world.ph emails are allowed to register.");
         setShowAlert(true);
-        return; 
+        return;
     }
- 
-    setShowAlert(false);
-    setShowToast(true);
-    setTimeout(() => {
-        navigation.push('/it35-lab/app', 'forward', 'replace');
-    }, 1500);
+
+    const { data, error } = await supabase.from('users').select('*').eq('email', email).single();
+    
+    if (error || !data) {
+        setErrorMessage('Invalid email or password.');
+        setShowAlert(true);
+        return;
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(password, data.password);
+    if (!isPasswordCorrect) {
+        setErrorMessage('Invalid email or password.');
+        setShowAlert(true);
+        return;
+    }
+
+    if (!data.username || !data.user_firstname || !data.user_lastname || !data.user_avatar_url) {
+        navigation.push('/fill-up-info', 'forward');
+    } else {
+        setShowToast(true);
+        setTimeout(() => {
+            navigation.push('/it35-lab/app', 'forward', 'replace');
+        }, 1500);
+    }
   };
 
   const goToRegister = () => {
@@ -106,7 +121,7 @@ const Login: React.FC = () => {
                   isOpen={showToast}
                   onDidDismiss={() => setShowToast(false)}
                   message="Login successful! Redirecting..."
-                  duration={19500}
+                  duration={1500}
                   position="top"
                   color="primary"
               />
