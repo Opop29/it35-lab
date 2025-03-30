@@ -8,7 +8,7 @@ import {
       IonToolbar 
   } from '@ionic/react';
   
-  const Template: React.FC = () => {
+  const Account: React.FC = () => {
     return (
       <IonPage>
         <IonHeader>
@@ -25,4 +25,4 @@ import {
     );
   };
   
-  export default Template;
+  export default Account;
