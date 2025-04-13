@@ -1,0 +1,54 @@
+login/register
+----------------------------------------
+-- Enable pgcrypto extension for secure hashing (if needed)
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+CREATE TABLE users (
+    user_id SERIAL PRIMARY KEY,
+    username TEXT NOT NULL,
+    user_email TEXT NOT NULL UNIQUE,
+    user_firstname text,
+    user_lastname text,
+    user_avatar_url TEXT,
+    user_password TEXT NOT NULL,
+    date_registered TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+----------------------------------------------------
+----------------------------------------------------
+supabase/avatar
+-----------------------------------------------------
+--Enable RLS on the bucket (required for policies) 
+UPDATE storage.buckets SET public = false WHERE id ='user-avatars';
+
+--Create a policy for uploads (example: authenticated users can upload)
+
+CREATE POLICY "Allow authenticated uploads"
+ON storage.objects
+FOR INSERT
+TO authenticated 
+WITH CHECK (
+  bucket_id = 'user-avatars' 
+);
+ 
+--Create a policy for reads (public or authenticated)
+CREATE POLICY "Allow public reads" 
+ON storage.objects 
+FOR SELECT USING ( 
+bucket_id = 'user-avatars'
+); 
+
+SELECT FROM storage.objects WHERE bucket_id = 'user-avatars';
+-------------------------------------------------------------------
+---------------------------------------------------------------------
+post/feed
+----------------------------------------------------------------------
+CREATE TABLE posts (
+ post_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+ user_id INT REFERENCES users (user_id) ON DELETE CASCADE, username TEXT NOT NULL,
+ post_content TEXT NOT NULL,
+ post_created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+post_updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+ALTER TABLE posts ADD COLUMN avatar_url TEXT;
+------------------------------------------------------------------
+---------------------------------------------------------------------
