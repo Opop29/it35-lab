@@ -17,7 +17,6 @@ import {
 } from '@ionic/react';
 import { supabase } from '../utils/supabaseClient';
 import bcrypt from 'bcryptjs';
-import './App.css'; // or your specific styles
 
 
 // Reusable Alert Component
