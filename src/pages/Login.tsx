@@ -3,214 +3,243 @@ import {
     IonAvatar,
     IonButton,
     IonContent, 
-    IonInput,  
+    IonIcon, 
+    IonInput, 
+    IonInputPasswordToggle,  
     IonPage,  
-    IonLoading,
-    IonModal,
+    IonToast,  
     useIonRouter
-} from '@ionic/react';
-import { useState } from 'react';
-import './css/login.css'; 
-import { supabase } from '../utils/supabaseClient';
-import bcrypt from 'bcryptjs';
-
-const Login: React.FC = () => {
-    const navigation = useIonRouter();
-    const [email, setEmail] = useState('');  
-    const [password, setPassword] = useState('');
-    const [showAlert, setShowAlert] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [showModal, setShowModal] = useState(false);
-    const [username, setUsername] = useState('');
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [userId, setUserId] = useState<number | null>(null);
-
-    const doLogin = async () => {
-        if (!email || !password) {
-            setErrorMessage('Please enter both email and password.');
-            setShowAlert(true);
-            return;
-        }
-        
-        if (!email.endsWith("@Anime.world.ph")) {
-            setErrorMessage("Only @Anime.world.ph emails are allowed to login.");
-            setShowAlert(true);
-            return;
-        }
-
-        setLoading(true);
-
-        try {
-            const { data: user, error } = await supabase
-                .from('users')
-                .select('user_id, email, password, username, user_firstname, user_lastname')
-                .eq('email', email)
-                .single();
-
-            if (error || !user) {
-                setLoading(false);
-                setErrorMessage("User not found. Please register first.");
-                setShowAlert(true);
-                return;
-            }
-            const passwordMatch = await bcrypt.compare(password, user.password);
-            if (!passwordMatch) {
-                setLoading(false);
-                setErrorMessage("Incorrect password. Please try again.");
-                setShowAlert(true);
-                return;
-            }
-
-            if (!user.username || !user.user_firstname || !user.user_lastname) {
-                setUserId(user.user_id);
-                setShowModal(true); 
-                setLoading(false);
-                return;
-            }
-
-            setTimeout(() => {
-                setLoading(false);
-                navigation.push('/it35-lab/app', 'forward', 'replace');
-            }, 2000);
-
-        } catch (err) {
-            setLoading(false);
-            setErrorMessage("An error occurred. Please try again later.");
-            setShowAlert(true);
-        }
-    };
-
-    const saveUserInfo = async () => {
-        if (!username || !firstName || !lastName) {
-            setErrorMessage("Please fill in all fields.");
-            setShowAlert(true);
-            return;
-        }
-
-        if (!userId) {
-            setErrorMessage("User ID not found. Please try logging in again.");
-            setShowAlert(true);
-            return;
-        }
-
-        setLoading(true);
-
-        const { error } = await supabase
-            .from('users')
-            .update({ username, user_firstname: firstName, user_lastname: lastName })
-            .eq('user_id', userId);
-
-        if (error) {
-            setLoading(false);
-            setErrorMessage("Failed to update profile. Please try again.");
-            setShowAlert(true);
-            return;
-        }
-
-        setLoading(false);
-        setShowModal(false);
-
-        navigation.push('/it35-lab/app', 'forward', 'replace');
-    };
-
-    const goToRegister = () => {
-        navigation.push('/it35-lab/app/Register', 'forward');
-    };
-
+  } from '@ionic/react';
+  import { logoIonic } from 'ionicons/icons';
+  import { useEffect, useState } from 'react';
+  import { supabase } from '../utils/supabaseClient';
+  
+  const AlertBox: React.FC<{ message: string; isOpen: boolean; onClose: () => void }> = ({ message, isOpen, onClose }) => {
     return (
-        <IonPage>
-            <IonContent className="login-page">
-                <div className="login-container">
-                    <IonAvatar className="login-avatar">
-                        <img src="https://m.media-amazon.com/images/I/61rYhM2ECwL._AC_UF894,1000_QL80_.jpg" alt="Anime Logo" className="login-icon" />
-                    </IonAvatar>
-
-                    <h1 className="login-title"> "Welcome, Anime Enthusiast!"</h1>
-                    <IonInput
-                        label="Email"
-                        labelPlacement="floating"
-                        fill="outline"
-                        type="email"
-                        placeholder="Enter Email"
-                        value={email}
-                        onIonChange={e => setEmail(e.detail.value!)}
-                        className="login-input"
-                    />
-                    <IonInput
-                        label="Password"
-                        labelPlacement="floating"
-                        fill="outline"
-                        type="password"
-                        placeholder="Enter Password"
-                        value={password}
-                        onIonChange={e => setPassword(e.detail.value!)}
-                        className="login-input"
-                    />
-                    <IonButton onClick={doLogin} expand="full" shape="round" className="login-button">
-                        Login
-                    </IonButton>
-                    <h5> "Join the Anime World! by:"</h5>
-                    <IonButton onClick={goToRegister} expand="full" shape="round" className="register-button">
-                        Register
-                    </IonButton>
-                </div>
-
-                <IonAlert
-                    isOpen={showAlert}
-                    onDidDismiss={() => setShowAlert(false)}
-                    header="Login Failed"
-                    message={errorMessage}
-                    buttons={['OK']}
-                />
-
-                {/* Loading Screen */}
-                <IonLoading
-                    isOpen={loading}
-                    message="Logging in... Please wait."
-                    spinner="circles"
-                />
-
-                {/* Modal for first-time login */}
-                <IonModal isOpen={showModal}>
-                    <IonContent className="modal-content">
-                        <h2>Complete Your Profile</h2>
-                        <IonInput
-                            label="Username"
-                            labelPlacement="floating"
-                            fill="outline"
-                            type="text"
-                            placeholder="Enter your username"
-                            value={username}
-                            onIonChange={e => setUsername(e.detail.value!)}
-                        />
-                        <IonInput
-                            label="First Name"
-                            labelPlacement="floating"
-                            fill="outline"
-                            type="text"
-                            placeholder="Enter your first name"
-                            value={firstName}
-                            onIonChange={e => setFirstName(e.detail.value!)}
-                        />
-                        <IonInput
-                            label="Last Name"
-                            labelPlacement="floating"
-                            fill="outline"
-                            type="text"
-                            placeholder="Enter your last name"
-                            value={lastName}
-                            onIonChange={e => setLastName(e.detail.value!)}
-                        />
-                        <IonButton onClick={saveUserInfo} expand="full" shape="round" color="primary">
-                            Save & Continue
-                        </IonButton>
-                    </IonContent>
-                </IonModal>
-            </IonContent>
-        </IonPage>
+      <IonAlert
+        isOpen={isOpen}
+        onDidDismiss={onClose}
+        header="Notification"
+        message={message}
+        buttons={['OK']}
+      />
     );
-};
-
-export default Login;
+  };
+  
+  const Login: React.FC = () => {
+    const navigation = useIonRouter();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [alertMessage, setAlertMessage] = useState('');
+    const [showAlert, setShowAlert] = useState(false);
+    const [showToast, setShowToast] = useState(false);
+  
+    
+    useEffect(() => {
+      const style = document.createElement('style');
+      style.innerHTML = `
+        ion-content {
+          --background: transparent;
+          background-image: url('https://i.gifer.com/origin/a4/a4fb1ab272da13569b081edaea1b2586_w200.gif');
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+          height: 100%;
+          width: 100%;
+          position: absolute;
+          top: 0;
+          left: 0;
+        }
+  
+        .login-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          background-color: rgba(0, 0, 0, 0.65);
+          padding: 30px;
+          border-radius: 20px;
+          backdrop-filter: blur(6px);
+          box-shadow: 0 0 20px aqua;
+          max-width: 90%;
+          margin: 25% auto 0 auto;
+        }
+  
+        .login-avatar {
+          width: 150px;
+          height: 150px;
+          border-radius: 50%;
+          overflow: hidden;
+          border: 5px solid aqua;
+          box-shadow: 0 0 12px aqua;
+          margin-bottom: 20px;
+        }
+  
+        .login-avatar img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 50%;
+        }
+  
+        .login-header {
+          font-size: 28px;
+          font-weight: bold;
+          color: white;
+          text-shadow: 0 0 8px aqua;
+          text-align: center;
+          margin-bottom: 20px;
+        }
+  
+        .login-password-input {
+          margin-top: 10px;
+        }
+  
+        ion-input {
+          width: 100%;
+          --background: #111;
+          --color: white;
+          --placeholder-color: #aaa;
+          --highlight-color-focused: aqua;
+          --border-color: aqua;
+          --padding-start: 16px;
+          --padding-end: 16px;
+          margin-bottom: 10px;
+          border-radius: 10px;
+        }
+  
+        .login-input {
+          --color: aqua;
+          --placeholder-color: rgba(0, 255, 255, 0.5);
+          --highlight-color-focused: aqua;
+          --border-color: aqua;
+          color: aqua;
+          margin-bottom: 16px;
+          font-size: 16px;
+          --padding-start: 12px;
+          --padding-end: 12px;
+          --padding-top: 14px;
+          --padding-bottom: 14px;
+          transition: all 0.3s ease;
+          border-radius: 12px;
+          box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+        }
+  
+        .login-input:hover {
+          box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+          transform: scale(1.02);
+          border-color: cyan;
+        }
+  
+        .login-input:focus-within {
+          box-shadow: 0 0 25px rgba(0, 255, 255, 0.8);
+          border-color: deepskyblue;
+        }
+  
+        .register-text {
+          margin-top: 20px;
+          text-align: center;
+          color: white;
+          font-size: 16px;
+          font-weight: 400;
+        }
+  
+        .register-text a {
+          color: aqua;
+          text-decoration: none;
+          font-weight: 600;
+          transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+  
+        .register-text a:hover {
+          color: #00ffff;
+          text-shadow: 0 0 10px aqua;
+        }
+      `;
+      document.head.appendChild(style);
+      return () => {
+        document.head.removeChild(style);
+      };
+    }, []);
+    const doLogin = async () => {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+  
+      if (error) {
+        setAlertMessage(error.message);
+        setShowAlert(true);
+        return;
+      }
+  
+      setShowToast(true); 
+      setTimeout(() => {
+        navigation.push('/it35-lab/app', 'forward', 'replace');
+      }, 300);
+    };
+    
+    return (
+      <IonPage>
+        <IonContent className='ion-padding'>
+          <div style={{
+            display: 'flex',
+            color:'aqua',
+            flexDirection:'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop:'25%'
+          }}>
+           <IonAvatar className="login-avatar">
+            <img
+              src="https://images.hdqwalls.com/wallpapers/solo-leveling-vx.jpg"
+              alt="User Avatar"
+            />
+          </IonAvatar>
+            <h1 style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>USER LOGIN</h1>
+            <IonInput
+              label="Email" 
+              labelPlacement="floating" 
+              fill="outline"
+              type="email"
+              placeholder="Enter Email"
+              value={email}
+              onIonChange={e => setEmail(e.detail.value!)}
+            />
+            <IonInput style={{ marginTop:'10px' }}      
+              fill="outline"
+              type="password"
+              placeholder="Password"
+              value={password}
+              onIonChange={e => setPassword(e.detail.value!)}
+            >
+              <IonInputPasswordToggle slot="end"></IonInputPasswordToggle>
+            </IonInput>
+          </div>
+          <IonButton onClick={doLogin} expand="full" shape='round'>
+            Login
+          </IonButton>
+  
+          <IonButton routerLink="/it35-lab/register" expand="full" fill="clear" shape='round'>
+            Don't have an account? Register here
+          </IonButton>
+  
+          {/* Reusable AlertBox Component */}
+          <AlertBox message={alertMessage} isOpen={showAlert} onClose={() => setShowAlert(false)} />
+  
+          {/* IonToast for success message */}
+          <IonToast
+            isOpen={showToast}
+            onDidDismiss={() => setShowToast(false)}
+            message="Login successful! Redirecting..."
+            duration={1500}
+            position="top"
+            color="primary"
+          />
+        </IonContent>
+      </IonPage>
+    );
+  };
+  
+  export default Login;
